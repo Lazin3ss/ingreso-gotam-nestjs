@@ -15,6 +15,5 @@ export class AgregarEmpleadoFormComponent {
 
   addJorge(): void {
     const something = this.agregarempleadoService.addJorge();
-    console.log(something);
   }
 }
