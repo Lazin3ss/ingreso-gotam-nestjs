@@ -1,7 +1,7 @@
 export class CreateEmpleadoDto {
     nombre: string;
     fechaDeNacimiento: string;
-    desarrollador: boolean;
+    esDesarrollador: boolean;
     descripcion: string;
     areaDeTrabajo: string;
 }

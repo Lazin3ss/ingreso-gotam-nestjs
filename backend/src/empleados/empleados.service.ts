@@ -1,49 +1,52 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { CreateEmpleadoDto } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDto } from './dto/update-empleado.dto';
-import { Empleado } from './entities/empleado.entity';
+import { Empleado } from './models/empleado.model';
 
 @Injectable()
 export class EmpleadosService {
-  private readonly empleados: Empleado[] = [];
+  constructor(
+    @InjectModel(Empleado)
+    private empleadoModel: typeof Empleado,
+  ) {}
 
-  create(createEmpleadoDto: CreateEmpleadoDto) {
-    let newId = 0;
-    if (this.empleados.length > 0) {
-      newId = this.empleados[this.empleados.length-1].id + 1;
-    }
-    this.empleados.push(new Empleado(newId, createEmpleadoDto.nombre, createEmpleadoDto.fechaDeNacimiento, createEmpleadoDto.desarrollador, createEmpleadoDto.descripcion, createEmpleadoDto.areaDeTrabajo));
+  create(createEmpleadoDto: CreateEmpleadoDto): Promise<Empleado> {
+    return this.empleadoModel.create({
+      nombre: createEmpleadoDto.nombre,
+      fechaDeNacimiento: new Date(createEmpleadoDto.fechaDeNacimiento),
+      esDesarrollador: createEmpleadoDto.esDesarrollador,
+      descripcion: createEmpleadoDto.descripcion,
+      areaDeTrabajo: createEmpleadoDto.areaDeTrabajo
+    });
   }
 
-  findAll() {
-    return this.empleados;
+  async findAll(): Promise<Empleado[]> {
+    return this.empleadoModel.findAll();
   }
   
-  findOne(id: number) {
-    return this.empleados.find((empleado) => empleado.id == id);
+  findOne(id: number): Promise<Empleado> {
+    return this.empleadoModel.findOne({
+      where: {
+        id,
+      },
+    });
   }
 
-  update(id: number, updateEmpleadoDto: UpdateEmpleadoDto) {
-    let i = -1;
-    this.empleados.find((empleado, index) => {
-      if (empleado.id == id) {
-        i = index;
-        empleado = Object.assign(empleado,updateEmpleadoDto);
-        return true;
-      }
-    })
-    return this.empleados[i];
+  async update(id: number, updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado> {
+    const empleado = await this.findOne(id);
+    if (empleado != null) {
+      await empleado.update(updateEmpleadoDto);
+    }
+    return empleado;
   }
 
-  remove(id: number) {
-    let found = false;
-    this.empleados.find((empleado, index) => {
-      if (empleado.id == id) {
-        this.empleados.splice(index,1);
-        found = true;
-        return true;
-      }
-    })
-    return found;
+  async remove(id: number): Promise<boolean> {
+    const empleado = await this.findOne(id);
+    if (empleado != null) {
+      empleado.destroy();
+      return true;
+    }
+    return false;
   }
 }
