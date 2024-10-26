@@ -12,6 +12,9 @@ export class EmpleadosService {
   ) {}
 
   create(createEmpleadoDto: CreateEmpleadoDto): Promise<Empleado> {
+    if (createEmpleadoDto.fechaDeNacimiento == null) {
+      createEmpleadoDto.fechaDeNacimiento = "1970-01-01";
+    }
     return this.empleadoModel.create({
       nombre: createEmpleadoDto.nombre,
       fechaDeNacimiento: new Date(createEmpleadoDto.fechaDeNacimiento),
