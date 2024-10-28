@@ -4,7 +4,7 @@ import { CreateEmpleadoDto } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDto } from './dto/update-empleado.dto';
 import { Empleado } from './models/empleado.model';
 
-@Controller('empleados')
+@Controller('api/empleados')
 export class EmpleadosController {
   constructor(private readonly empleadosService: EmpleadosService) {}
 
