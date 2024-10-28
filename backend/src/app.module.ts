@@ -3,16 +3,17 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EmpleadosModule } from './empleados/empleados.module';
-import { Empleado } from './empleados/models/empleado.model';
+import { AreasDeTrabajoModule } from './areas-de-trabajo/areas-de-trabajo.module';
 
 @Module({
   imports: [
+    AreasDeTrabajoModule,
     EmpleadosModule,
     SequelizeModule.forRoot({
       dialect: 'sqlite',
-      storage: './../db/empleados.sqlite',
+      storage: './../db/database.sqlite',
       autoLoadModels: true,
-      synchronize: true,
+      synchronize: true
     })
   ],
   controllers: [AppController],

@@ -15,13 +15,13 @@ export class EmpleadosService {
     return this.empleadoModel.create({
       nombre: createEmpleadoDto.nombre,
       fechaDeNacimiento: new Date(createEmpleadoDto.fechaDeNacimiento),
+      areaDeTrabajoId: createEmpleadoDto.areaDeTrabajoId,
       esDesarrollador: createEmpleadoDto.esDesarrollador,
-      descripcion: createEmpleadoDto.descripcion,
-      areaDeTrabajo: createEmpleadoDto.areaDeTrabajo
+      descripcion: createEmpleadoDto.descripcion
     });
   }
 
-  async findAll(): Promise<Empleado[]> {
+  findAll(): Promise<Empleado[]> {
     return this.empleadoModel.findAll();
   }
   
@@ -35,18 +35,18 @@ export class EmpleadosService {
 
   async update(id: number, updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado> {
     const empleado = await this.findOne(id);
-    if (empleado != null) {
-      await empleado.update(updateEmpleadoDto);
+    if (empleado == null) {
+      throw new Error('La ID especificada no corresponde a un empleado existente');
     }
+    await empleado.update(updateEmpleadoDto);
     return empleado;
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: number): Promise<void> {
     const empleado = await this.findOne(id);
-    if (empleado != null) {
-      empleado.destroy();
-      return true;
+    if (empleado == null) {
+      throw new Error('La ID especificada no corresponde a un empleado existente');
     }
-    return false;
+    await empleado.destroy();
   }
 }
