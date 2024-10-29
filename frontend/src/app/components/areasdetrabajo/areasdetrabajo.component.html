@@ -1,0 +1,18 @@
+<div class="uk-container uk-container-expand uk-padding">
+    <table class="uk-table uk-table-striped uk-table-hover uk-table-justify">
+        <thead>
+            <tr>
+                <th class="uk-table-shrink">ID</th>
+                <th class="uk-table-expand">Nombre</th>
+                <th class="uk-table-expand">Cantidad Total de Empleados</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let area of getAllAreasDeTrabajo()">
+                <td>{{ area.id }}</td>
+                <td>{{ area.nombre }}</td>
+                <td>{{ getAreaDeTrabajoTotalEmployees(area.id) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

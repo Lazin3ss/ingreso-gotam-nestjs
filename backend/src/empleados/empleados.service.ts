@@ -22,7 +22,9 @@ export class EmpleadosService {
   }
 
   findAll(): Promise<Empleado[]> {
-    return this.empleadoModel.findAll();
+    return this.empleadoModel.findAll({
+      paranoid: false
+    });
   }
   
   findOne(id: number): Promise<Empleado> {
@@ -30,6 +32,7 @@ export class EmpleadosService {
       where: {
         id,
       },
+      paranoid: false
     });
   }
 
