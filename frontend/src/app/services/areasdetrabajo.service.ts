@@ -23,7 +23,7 @@ export class AreasDeTrabajoService {
 
   async create(nombre: string) {
     let id = -1;
-    const statusPost = this.http.post<AreaDeTrabajo>(environment.apiUrl+"/areasdetrabajo",{
+    const statusPost = this.http.post<AreaDeTrabajo>(environment.apiUrl+"/areasdetrabajo", {
       "nombre": nombre
     }).subscribe(response => {
       this.areas.set(response.id, response);
@@ -60,7 +60,8 @@ export class AreasDeTrabajoService {
   update(id: number) {
     const area = this.findOne(id);
     if (area != null) {
-      this.http.patch<AreaDeTrabajo>(environment.apiUrl+"/areasdetrabajo/"+id,{
+      this.http.patch<AreaDeTrabajo>(environment.apiUrl+"/areasdetrabajo", {
+        "id": area.id,
         "nombre": area.nombre
       }).subscribe(response => {
         this.areas.set(response.id, response)
@@ -69,7 +70,9 @@ export class AreasDeTrabajoService {
   }
 
   delete(id: number) {
-    this.http.delete(environment.apiUrl+"/areasdetrabajo/"+id).subscribe(response => {
+    this.http.delete<AreaDeTrabajo>(environment.apiUrl+"/areasdetrabajo", {
+      body: { id: id }
+    }).subscribe(() => {
       this.areas.delete(id);
     });
   }

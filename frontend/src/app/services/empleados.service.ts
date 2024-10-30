@@ -51,8 +51,8 @@ export class EmpleadosService {
   update(id: number) {
     const empleado = this.findOne(id);
     if (empleado != null) {
-      console.log(typeof(empleado.esDesarrollador));
-      this.http.patch<Empleado>(environment.apiUrl+"/empleados/"+id,{
+      this.http.patch<Empleado>(environment.apiUrl+"/empleados",{
+        "id": empleado.id,
         "nombre": empleado.nombre,
         "fechaDeNacimiento": new Date(empleado.fechaDeNacimiento),
         "areaDeTrabajoId": empleado.areaDeTrabajoId,
@@ -65,7 +65,9 @@ export class EmpleadosService {
   }
 
   delete(id: number) {
-    this.http.delete<Empleado>(environment.apiUrl+"/empleados/"+id).subscribe(response => {
+    this.http.delete<Empleado>(environment.apiUrl+"/empleados", {
+      body: { id: id }
+    }).subscribe(response => {
       this.empleados.set(response.id, response);
     });
   }

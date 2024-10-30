@@ -3,6 +3,7 @@ import { EmpleadosService } from './empleados.service';
 import { CreateEmpleadoDto } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDto } from './dto/update-empleado.dto';
 import { Empleado } from './models/empleado.model';
+import { EmpleadoDto } from './dto/empleado.dto';
 
 @Controller('api/empleados')
 export class EmpleadosController {
@@ -14,48 +15,45 @@ export class EmpleadosController {
       return await this.empleadosService.create(createEmpleadoDto);
     } catch (error) {
       if (error.name == "SequelizeForeignKeyConstraintError") {
-        throw new HttpException('La Area de Trabajo especificada no existe', HttpStatus.BAD_REQUEST);
+        throw new HttpException('El empleado especificado no existe', HttpStatus.BAD_REQUEST);
       } else {
         throw new HttpException('No se pudo agregar el empleado', HttpStatus.BAD_REQUEST);
       }
-      
     }
   }
 
   @Get()
-  async findAll(): Promise<Empleado[]> {
-    return await this.empleadosService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Empleado> {
-    const empleado = await this.empleadosService.findOne(+id);
-    if (empleado != null) {
-      return empleado;
+  async find(@Body() empleadoDto: EmpleadoDto): Promise<Empleado | Empleado[]> {
+    let empleado: Empleado;
+    if (empleadoDto.id != null) {
+      empleado = await this.empleadosService.findOne(+empleadoDto.id);
+    } else if (empleadoDto.nombre != null) {
+      empleado = await this.empleadosService.findByName(empleadoDto.nombre);
     } else {
-      throw new HttpException("No se encontró el empleado", HttpStatus.NOT_FOUND);
+      return await this.empleadosService.findAll();
+    }
+    if (empleado == null) {
+      throw new HttpException("La ID especificada no corresponde a un empleado existente", HttpStatus.NOT_FOUND);
+    } else {
+      return empleado;
     }
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado> {
+  @Patch()
+  async update(@Body() updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado> {
     try {
-      return await this.empleadosService.update(+id, updateEmpleadoDto);
-    } catch (error) {
-      if (error.name == "SequelizeForeignKeyConstraintError") {
-        throw new HttpException('La Area de Trabajo especificada no existe', HttpStatus.BAD_REQUEST);
-      } else {
-        throw new HttpException('La ID especificada no corresponde a un empleado existente', HttpStatus.BAD_REQUEST);
-      }
-    }
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<Empleado>  {
-    try {
-      return await this.empleadosService.remove(+id);
+      return await this.empleadosService.update(updateEmpleadoDto);
     } catch (error) {
       throw new HttpException('La ID especificada no corresponde a un empleado existente', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete()
+  async remove(@Body() empleadoDto: EmpleadoDto): Promise<Empleado>  {
+    try {
+      return await this.empleadosService.remove(+empleadoDto.id);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 }

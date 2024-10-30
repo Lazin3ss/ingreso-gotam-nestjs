@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateEmpleadoDto } from './dto/create-empleado.dto';
 import { UpdateEmpleadoDto } from './dto/update-empleado.dto';
 import { Empleado } from './models/empleado.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class EmpleadosService {
@@ -36,8 +37,19 @@ export class EmpleadosService {
     });
   }
 
-  async update(id: number, updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado> {
-    const empleado = await this.findOne(id);
+  findByName(empleadoName: string): Promise<Empleado> {
+    return this.empleadoModel.findOne({
+      where: {
+        nombre: {
+          [Op.like]: empleadoName
+        },
+      },
+      paranoid: false
+    });
+  }
+
+  async update(updateEmpleadoDto: UpdateEmpleadoDto): Promise<Empleado> {
+    const empleado = await this.findOne(updateEmpleadoDto.id);
     if (empleado == null) {
       throw new Error('La ID especificada no corresponde a un empleado existente');
     }

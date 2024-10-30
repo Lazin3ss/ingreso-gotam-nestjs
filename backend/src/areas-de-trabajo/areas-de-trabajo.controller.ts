@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Delete, HttpStatus, HttpException } from '@nestjs/common';
 import { AreasDeTrabajoService } from './areas-de-trabajo.service';
 import { CreateAreaDeTrabajoDto } from './dto/create-area-de-trabajo.dto';
 import { UpdateAreaDeTrabajoDto } from './dto/update-area-de-trabajo.dto';
 import { AreaDeTrabajo } from './models/area-de-trabajo.model';
+import { AreaDeTrabajoDto } from './dto/area-de-trabajo.dto';
 
 @Controller('api/areasdetrabajo')
 export class AreasDeTrabajoController {
@@ -14,33 +15,39 @@ export class AreasDeTrabajoController {
   }
 
   @Get()
-  async findAll() {
-    return this.areasDeTrabajoService.findAll();
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<AreaDeTrabajo> {
-    const areaDeTrabajo = await this.areasDeTrabajoService.findOne(+id);
-    if (areaDeTrabajo != null) {
-      return areaDeTrabajo;
+  async find(@Body() areaDeTrabajoDto: AreaDeTrabajoDto): Promise<AreaDeTrabajo | AreaDeTrabajo[]> {
+    let areaDeTrabajo: AreaDeTrabajo;
+    if (areaDeTrabajoDto.id != null) {
+      areaDeTrabajo = await this.areasDeTrabajoService.findOne(+areaDeTrabajoDto.id);
+    } else if (areaDeTrabajoDto.nombre != null) {
+      if (areaDeTrabajoDto.createIfDoesntExist) {
+        areaDeTrabajo = await this.areasDeTrabajoService.findOrCreate(areaDeTrabajoDto.nombre);
+      } else {
+        areaDeTrabajo = await this.areasDeTrabajoService.findByName(areaDeTrabajoDto.nombre);
+      }
     } else {
+      return await this.areasDeTrabajoService.findAll();
+    }
+    if (areaDeTrabajo == null) {
       throw new HttpException("La ID especificada no corresponde a un area de trabajo existente", HttpStatus.NOT_FOUND);
+    } else {
+      return areaDeTrabajo;
     }
   }
 
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateAreaDeTrabajoDto: UpdateAreaDeTrabajoDto): Promise<AreaDeTrabajo> {
+  @Patch()
+  async update(@Body() updateAreaDeTrabajoDto: UpdateAreaDeTrabajoDto): Promise<AreaDeTrabajo> {
     try {
-      return await this.areasDeTrabajoService.update(+id, updateAreaDeTrabajoDto);
+      return await this.areasDeTrabajoService.update(updateAreaDeTrabajoDto);
     } catch (error) {
       throw new HttpException('La ID especificada no corresponde a un area de trabajo existente', HttpStatus.BAD_REQUEST);
     }
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string): Promise<void>  {
+  @Delete()
+  async remove(@Body() areaDeTrabajoDto: AreaDeTrabajoDto): Promise<void>  {
     try {
-      await this.areasDeTrabajoService.remove(+id);
+      await this.areasDeTrabajoService.remove(+areaDeTrabajoDto.id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
