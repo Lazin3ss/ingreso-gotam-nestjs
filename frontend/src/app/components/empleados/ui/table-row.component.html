@@ -10,7 +10,7 @@
     <td class="uk-invisible-hover">
         <div [ngClass]="sanitizeDatestring(model.fechaDeBaja) != '' ? 'uk-hidden' : ''">
             <a class="uk-icon-button" uk-icon="pencil" uk-tooltip="Editar" (click)="startEditMode()"></a>
-            <a class="uk-icon-button" uk-icon="trash" uk-tooltip="Eliminar" (click)="deleteEmpleado()"></a>
+            <a class="uk-icon-button" uk-icon="ban" uk-tooltip="Dar de Baja" (click)="deleteEmpleado()"></a>
         </div>
     </td>
 </ng-container>
