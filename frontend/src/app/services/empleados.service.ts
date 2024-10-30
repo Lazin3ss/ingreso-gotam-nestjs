@@ -37,7 +37,7 @@ export class EmpleadosService {
   }
 
   findAllByAreaDeTrabajoId(id: number) {
-    let search = [...this.empleados.values()].filter(empleado => empleado.areaDeTrabajoId == id);
+    let search = [...this.empleados.values()].filter(empleado => empleado.areaDeTrabajoId == id && empleado.fechaDeBaja == null);
     if (search != null) {
       return search;
     }
