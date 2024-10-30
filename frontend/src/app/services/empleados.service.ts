@@ -16,7 +16,6 @@ export class EmpleadosService {
   refresh() {
     this.http.get<Empleado[]>(environment.apiUrl+"/empleados").subscribe(response => {
       this.empleados = new Map<number, Empleado>(response.map(obj => [obj.id, obj]));
-      console.log(this.empleados);
     });
   }
 

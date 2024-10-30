@@ -83,8 +83,4 @@ export class EmpleadosTableRowComponent {
       this.empleadosService.update(this.model.id);
     }
   }
-
-  hola() {
-    console.log("hola");
-  }
 }

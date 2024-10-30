@@ -17,7 +17,6 @@ export class AreasDeTrabajoService {
     this.areas.clear()
     this.http.get<AreaDeTrabajo[]>(environment.apiUrl+"/areasdetrabajo").subscribe(response => {
       this.areas = new Map<number, AreaDeTrabajo>(response.map(obj => [obj.id, obj]));
-      console.log(this.areas);
     });
   }
 
