@@ -6,23 +6,17 @@
                 <th class="uk-table-expand">Nombre</th>
                 <th>Edad</th>
                 <th class="uk-table-expand">Área de Trabajo</th>
-                <th>¿Es Desarrollador?</th>
-                <th class="uk-table-expand">Descripción</th>
+                <th>Tipo de empleado</th>
+                <th>Descripción</th>
                 <th class="uk-table-expand">Fecha de Alta</th>
                 <th class="uk-table-expand">Fecha de Baja</th>
+                <th class="uk-width-small"></th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let empleado of getAllEmpleados()">
-                <td>{{ empleado.id }}</td>
-                <td>{{ empleado.nombre }}</td>
-                <td>{{ convertBirthdateToAge(empleado.fechaDeNacimiento) }}</td>
-                <td>{{ convertAreaIdToName(empleado.areaDeTrabajoId) }}</td>
-                <td>{{ empleado.esDesarrollador }}</td>
-                <td>{{ empleado.descripcion }}</td>
-                <td>{{ sanitizeDatestring(empleado.fechaDeAlta) }}</td>
-                <td>{{ sanitizeDatestring(empleado.fechaDeBaja) }}</td>
-            </tr>
+            <tr class="uk-visible-toggle" tablerow-item *ngFor="let empleado of getAllEmpleados()" [model]="empleado"></tr>
         </tbody>
     </table>
+    <app-empleado-form />
+    <button class="uk-button uk-button-primary" uk-toggle="target: #add-modal"><span uk-icon="plus"></span></button>
 </div>

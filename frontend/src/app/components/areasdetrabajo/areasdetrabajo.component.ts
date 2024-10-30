@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { AreasDeTrabajoService } from '../../services/areasdetrabajo.service';
 import { EmpleadosService } from '../../services/empleados.service';
+import { AreaDeTrabajoFormComponent } from './ui/areadetrabajo-form.component';
+import { FormsModule } from '@angular/forms';
+import { AreasDeTrabajoTableRowComponent } from './ui/table-row.component';
 
 
 @Component({
-  imports: [NgIf, NgFor],
+  imports: [AreaDeTrabajoFormComponent, AreasDeTrabajoTableRowComponent, NgIf, NgFor, FormsModule,],
   selector: 'app-areasdetrabajo',
   standalone: true,
   templateUrl: './areasdetrabajo.component.html',
@@ -13,53 +16,24 @@ import { EmpleadosService } from '../../services/empleados.service';
 })
 
 export class AreasDeTrabajoComponent {
-  editMode = false;
-  editId = -1;
-  nombre = '';
-
   constructor(
     private areasDeTrabajoService: AreasDeTrabajoService,
     private empleadosService: EmpleadosService
   ) {}
 
   getAllAreasDeTrabajo() {
-    return this.areasDeTrabajoService.getAllAreasDeTrabajo();
+    return this.areasDeTrabajoService.findAll();
   }
 
   getAreaDeTrabajoById(id: number) {
-    return this.areasDeTrabajoService.getAreaDeTrabajoById(id);
+    return this.areasDeTrabajoService.findOne(id);
   }
 
   getAreaDeTrabajoTotalEmployees(id: number) {
-    return this.empleadosService.getEmpleadosByAreaDeTrabajoId(id).length;
+    return this.empleadosService.findAllByAreaDeTrabajoId(id).length;
   }
 
-  removeAreaDeTrabajo(id: number) {
-    this.areasDeTrabajoService.removeById(id);
-  }
-
-  startEditMode(id: number) {
-    this.editMode = true;
-    this.nombre = '';
-    if (id != null) {
-      this.editId = id;
-      const area = this.getAreaDeTrabajoById(id);
-      if (area != null) {
-        this.nombre = area.nombre;
-      }
-    }
-  }
-
-  editing(id: number) {
-    return this.editId == id;
-  }
-
-  endEditMode(submit: boolean) {
-    if (submit) {
-      this.areasDeTrabajoService.updateAreaDeTrabajo(this.editId, this.nombre);
-    }
-    this.editMode = false;
-    this.nombre = '';
-    this.editId = -1;
+  deleteAreaDeTrabajo(id: number) {
+    this.areasDeTrabajoService.delete(id);
   }
 }

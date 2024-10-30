@@ -5,31 +5,13 @@
                 <th class="uk-table-shrink">ID</th>
                 <th class="uk-table-expand">Nombre</th>
                 <th>Cantidad Total de Empleados</th>
-                <th class="uk-width-small">Opciones</th>
+                <th class="uk-width-small"></th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let area of getAllAreasDeTrabajo()">
-                <ng-container *ngIf="!editing(area.id)">
-                    <td>{{ area.id }}</td>
-                    <td>{{ area.nombre }}</td>
-                    <td>{{ getAreaDeTrabajoTotalEmployees(area.id) }}</td>
-                    <td>
-                        <a class="uk-button uk-button-small" uk-icon="pencil" (click)="startEditMode(area.id)"></a>
-                        <a class="uk-button uk-button-small" uk-icon="trash" (click)="removeAreaDeTrabajo(area.id)"></a>
-                    </td>
-                </ng-container>
-                <ng-container *ngIf="editing(area.id)">
-                    <td>{{ area.id }}</td>
-                    <td><input class="uk-input" type="text" #areaName [(value)]="nombre" (change)="nombre = areaName.value"></td>
-                    <td>{{ getAreaDeTrabajoTotalEmployees(area.id) }}</td>
-                    <td>
-                        <a class="uk-button uk-button-small" (click)="endEditMode(true); areaName.value = ''" uk-tooltip="Crear" uk-icon="check"></a>
-                        <a class="uk-button uk-button-small" (click)="endEditMode(false); areaName.value = ''" uk-tooltip="Cancelar" uk-icon="close"></a>
-                    </td>
-                </ng-container>
-            </tr>
+            <tr class="uk-visible-toggle" tablerow-item *ngFor="let area of getAllAreasDeTrabajo()" [model]="area"></tr>
         </tbody>
     </table>
-    <button class="uk-button uk-button-primary" (click)="startEditMode(-1)"><span uk-icon="plus"></span></button>
+    <app-areadetrabajo-form />
+    <button class="uk-button uk-button-primary" uk-toggle="target: #add-modal"><span uk-icon="plus"></span></button>
 </div>

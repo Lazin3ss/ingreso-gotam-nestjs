@@ -1,0 +1,35 @@
+<ng-container *ngIf="!editing">
+    <td>{{ model.id }}</td>
+    <td>{{ model.nombre }}</td>
+    <td>{{ convertBirthdateToAge() }}</td>
+    <td>{{ convertAreaIdToName() }}</td>
+    <td>{{ sanitizeDesarrolladorBoolean() }}</td>
+    <td>{{ model.descripcion }}</td>
+    <td>{{ sanitizeDatestring(model.fechaDeAlta) }}</td>
+    <td>{{ sanitizeDatestring(model.fechaDeBaja) }}</td>
+    <td>
+        <ul class="uk-iconnav uk-invisible-hover" *ngIf="sanitizeDatestring(model.fechaDeBaja) == ''">
+            <a class="uk-button uk-button-small" uk-icon="pencil" uk-tooltip="Editar" (click)="startEditMode()"></a>
+            <a class="uk-button uk-button-small" uk-icon="trash" uk-tooltip="Eliminar" (click)="deleteEmpleado()"></a>
+        </ul>
+    </td>
+</ng-container>
+<ng-container *ngIf="editing">
+    <td>{{ model.id }}</td>
+    <td><input class="uk-input" type="text" [(ngModel)]="model.nombre"></td>
+    <td><input class="uk-input" type="date" [(ngModel)]="model.fechaDeNacimiento"></td>
+    <td>
+        <input [(ngModel)]="model.areaDeTrabajo" class="uk-input" list="areasDeTrabajo" name="areaDeTrabajo">
+        <datalist id="areasDeTrabajo">
+            <option *ngFor="let area of getAllAreasDeTrabajo()" [value]="area.nombre"></option>
+        </datalist>
+    </td>
+    <td></td>
+    <td></td>
+    <td>
+        <ul class="uk-iconnav">
+            <a class="uk-button uk-button-small" uk-tooltip="Crear" uk-icon="check" (click)="endEditMode(true)"></a>
+            <a class="uk-button uk-button-small" uk-tooltip="Cancelar" uk-icon="close" (click)="endEditMode(false)"></a>
+        </ul>
+    </td>
+</ng-container>
