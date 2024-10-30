@@ -45,11 +45,12 @@ export class EmpleadosService {
     return empleado;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<Empleado> {
     const empleado = await this.findOne(id);
     if (empleado == null) {
       throw new Error('La ID especificada no corresponde a un empleado existente');
     }
     await empleado.destroy();
+    return empleado;
   }
 }

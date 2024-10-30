@@ -1,5 +1,5 @@
 import { Component, Input } from "@angular/core";
-import { NgIf, NgFor } from "@angular/common";
+import { NgIf, NgFor, NgClass } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AreasDeTrabajoService } from "../../../services/areasdetrabajo.service";
 import { EmpleadosService } from "../../../services/empleados.service";
@@ -7,7 +7,7 @@ import { Empleado } from "../../../types/empleado.type";
 
 
 @Component({
-  imports: [NgIf, NgFor, FormsModule],
+  imports: [NgClass, NgIf, NgFor, FormsModule],
   selector: '[tablerow-item]',
   standalone: true,
   templateUrl: './table-row.component.html'
@@ -51,12 +51,14 @@ export class EmpleadosTableRowComponent {
     }
   }
 
-  convertAreaIdToName() {
+  getAreaNameFromId() {
     const area = this.areasDeTrabajoService.findOne(this.model.areaDeTrabajoId);
     if (area != null) {
-      return area.nombre;
+      this.model.areaDeTrabajoNombre = area.nombre;
+    } else {
+      this.model.areaDeTrabajoNombre = "";
     }
-    return "";
+    return this.model.areaDeTrabajoNombre;
   }
 
   convertBirthdateToAge() {
@@ -70,9 +72,14 @@ export class EmpleadosTableRowComponent {
     this.editing = true;
   }
 
-  endEditMode(submit: boolean) {
+  async endEditMode(submit: boolean) {
     this.editing = false;
     if (submit) {
+      const area = await this.areasDeTrabajoService.findOneByNameOrCreate(this.model.areaDeTrabajoNombre);
+      if (area != null) {
+        this.model.areaDeTrabajoId = area.id;
+        this.model.areaDeTrabajoNombre = area.nombre;
+      }
       this.empleadosService.update(this.model.id);
     }
   }

@@ -3,7 +3,7 @@ export type Empleado = {
     nombre: string;
     fechaDeNacimiento: string;
     areaDeTrabajoId: number;
-    areaDeTrabajo: string;
+    areaDeTrabajoNombre: string;
     esDesarrollador: boolean;
     descripcion: string;
     fechaDeAlta: Date;

@@ -2,34 +2,41 @@
     <td>{{ model.id }}</td>
     <td>{{ model.nombre }}</td>
     <td>{{ convertBirthdateToAge() }}</td>
-    <td>{{ convertAreaIdToName() }}</td>
+    <td>{{ getAreaNameFromId() }}</td>
     <td>{{ sanitizeDesarrolladorBoolean() }}</td>
     <td>{{ model.descripcion }}</td>
     <td>{{ sanitizeDatestring(model.fechaDeAlta) }}</td>
     <td>{{ sanitizeDatestring(model.fechaDeBaja) }}</td>
-    <td>
-        <ul class="uk-iconnav uk-invisible-hover" *ngIf="sanitizeDatestring(model.fechaDeBaja) == ''">
-            <a class="uk-button uk-button-small" uk-icon="pencil" uk-tooltip="Editar" (click)="startEditMode()"></a>
-            <a class="uk-button uk-button-small" uk-icon="trash" uk-tooltip="Eliminar" (click)="deleteEmpleado()"></a>
-        </ul>
+    <td class="uk-invisible-hover">
+        <div [ngClass]="sanitizeDatestring(model.fechaDeBaja) != '' ? 'uk-hidden' : ''">
+            <a class="uk-icon-button" uk-icon="pencil" uk-tooltip="Editar" (click)="startEditMode()"></a>
+            <a class="uk-icon-button" uk-icon="trash" uk-tooltip="Eliminar" (click)="deleteEmpleado()"></a>
+        </div>
     </td>
 </ng-container>
 <ng-container *ngIf="editing">
     <td>{{ model.id }}</td>
-    <td><input class="uk-input" type="text" [(ngModel)]="model.nombre"></td>
+    <td><input class="uk-input" type="text" [(ngModel)]="model.nombre" placeholder="nombre"></td>
     <td><input class="uk-input" type="date" [(ngModel)]="model.fechaDeNacimiento"></td>
     <td>
-        <input [(ngModel)]="model.areaDeTrabajo" class="uk-input" list="areasDeTrabajo" name="areaDeTrabajo">
+        <input [(ngModel)]="model.areaDeTrabajoNombre" class="uk-input" list="areasDeTrabajo" name="areaDeTrabajo" placeholder="Área de trabajo">
         <datalist id="areasDeTrabajo">
             <option *ngFor="let area of getAllAreasDeTrabajo()" [value]="area.nombre"></option>
         </datalist>
     </td>
+    <td>
+        <select class="uk-select" [(ngModel)]="model.esDesarrollador">
+            <option [ngValue]="true">Desarrollador</option>
+            <option [ngValue]="false">Común</option>
+        </select>
+    </td>
+    <td>
+        <textarea [(ngModel)]="model.descripcion" class="uk-textarea" name="descripcion" placeholder="Descripción"></textarea>
+    </td>
     <td></td>
     <td></td>
     <td>
-        <ul class="uk-iconnav">
-            <a class="uk-button uk-button-small" uk-tooltip="Crear" uk-icon="check" (click)="endEditMode(true)"></a>
-            <a class="uk-button uk-button-small" uk-tooltip="Cancelar" uk-icon="close" (click)="endEditMode(false)"></a>
-        </ul>
+        <a class="uk-icon-button" uk-tooltip="Finalizar" uk-icon="check" (click)="endEditMode(true)"></a>
+        <a class="uk-icon-button" uk-tooltip="Cancelar" uk-icon="close" (click)="endEditMode(false)"></a>
     </td>
 </ng-container>

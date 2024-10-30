@@ -51,9 +51,9 @@ export class EmpleadosController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<void>  {
+  async remove(@Param('id') id: string): Promise<Empleado>  {
     try {
-      await this.empleadosService.remove(+id);
+      return await this.empleadosService.remove(+id);
     } catch (error) {
       throw new HttpException('La ID especificada no corresponde a un empleado existente', HttpStatus.BAD_REQUEST);
     }

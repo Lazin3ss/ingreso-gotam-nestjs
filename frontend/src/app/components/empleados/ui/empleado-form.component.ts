@@ -29,12 +29,9 @@ export class EmpleadoFormComponent {
     if (this.areaDeTrabajo != "") {
       let areaId = -1;
       const area = await this.areasDeTrabajoService.findOneByNameOrCreate(this.areaDeTrabajo);
-        if (area != null) {
-          areaId = area.id
-        } else {
-          this.areasDeTrabajoService.create(this.areaDeTrabajo);
-          areaId = this.areasDeTrabajoService.findAll()[this.areasDeTrabajoService.areas.length-1].id+1;
-        }
+      if (area != null) {
+        areaId = area.id
+      }
       this.empleadosService.create(this.nombre, this.fechaDeNacimiento, this.esDesarrollador, this.descripcion, areaId);
     } else {
       this.empleadosService.create(this.nombre, this.fechaDeNacimiento, this.esDesarrollador, this.descripcion);

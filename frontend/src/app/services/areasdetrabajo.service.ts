@@ -1,85 +1,76 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AreaDeTrabajo } from '../types/areadetrabajo.type';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AreasDeTrabajoService {
-  areas: Array<AreaDeTrabajo> = [];
+  areas: Map<number, AreaDeTrabajo> = new Map<number, AreaDeTrabajo>();
 
   constructor(private http: HttpClient) {
     this.refresh();
   }
 
   refresh() {
-    return this.http.get<AreaDeTrabajo[]>("http://localhost:3000/api/areasdetrabajo").subscribe(response => {
-      this.areas = response;
+    this.areas.clear()
+    this.http.get<AreaDeTrabajo[]>(environment.apiUrl+"/areasdetrabajo").subscribe(response => {
+      this.areas = new Map<number, AreaDeTrabajo>(response.map(obj => [obj.id, obj]));
+      console.log(this.areas);
     });
   }
 
-  create(nombre: string) {
-    this.http.post("http://localhost:3000/api/areasdetrabajo/",{
+  async create(nombre: string) {
+    let id = -1;
+    const statusPost = this.http.post<AreaDeTrabajo>(environment.apiUrl+"/areasdetrabajo",{
       "nombre": nombre
     }).subscribe(response => {
-      console.log(response);
-      this.refresh();
+      this.areas.set(response.id, response);
+      id = response.id;
     });
+    // Esperamos a que se cierre la suscripción del POST antes de devolver el área nueva
+    while (!statusPost.closed) {
+      await this.sleep(100);
+    }
+    return this.areas.get(id);
   }
 
   findAll() {
-    return this.areas;
+    return [...this.areas.values()];
   }
 
   findOne(id: number) {
-    let search = this.areas.find(area => area.id == id);
-    return search;
+    return this.areas.get(id);
   }
 
   findOneByName(name: string) {
-    let search = this.areas.find(area => area.nombre == name);
-    return search;
+    return [...this.areas.values()].find(area => area.nombre == name);
   }
 
   async findOneByNameOrCreate(name: string) {
-    const area = this.findOneByName(name);
-    if (area != null) {
-      return area;
-    } else {
-      const statusPost = this.http.post("http://localhost:3000/api/areasdetrabajo/",{
-        "nombre": name
-      }).subscribe(async () => {
-        // Esperamos a que se refresque la lista de áreas de trabajo antes de continuar
-        const statusRefresh = this.refresh();
-        while (!statusRefresh.closed) {
-          await this.sleep(100);
-        }
-      });
-      // Esperamos a que se cierre la suscripción del POST antes de servir el área nueva
-      while (!statusPost.closed) {
-        await this.sleep(100);
-      }
-      return this.areas[length-1];
+    let area = this.findOneByName(name);
+    if (area == null) {
+      area = await this.create(name);
     }
+    return area;
   }
   
 
   update(id: number) {
     const area = this.findOne(id);
     if (area != null) {
-      this.http.patch("http://localhost:3000/api/areasdetrabajo/"+id,{
+      this.http.patch<AreaDeTrabajo>(environment.apiUrl+"/areasdetrabajo/"+id,{
         "nombre": area.nombre
       }).subscribe(response => {
-        console.log(response);
-        this.refresh();
+        this.areas.set(response.id, response)
       });
     }
   }
 
   delete(id: number) {
-    this.http.delete("http://localhost:3000/api/areasdetrabajo/"+id).subscribe(response => {
-      console.log(response);
-      this.refresh();
+    this.http.delete(environment.apiUrl+"/areasdetrabajo/"+id).subscribe(response => {
+      this.areas.delete(id);
     });
   }
 
