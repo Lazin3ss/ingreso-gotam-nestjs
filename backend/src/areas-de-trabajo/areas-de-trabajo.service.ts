@@ -3,6 +3,7 @@ import { CreateAreaDeTrabajoDto } from './dto/create-area-de-trabajo.dto';
 import { UpdateAreaDeTrabajoDto } from './dto/update-area-de-trabajo.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { AreaDeTrabajo } from './models/area-de-trabajo.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class AreasDeTrabajoService {
@@ -30,24 +31,28 @@ export class AreasDeTrabajoService {
     });
   }
 
-  findByName(areaName: string): Promise<AreaDeTrabajo[]> {
-    return this.areaDeTrabajoModel.findAll({
+  findByName(areaName: string): Promise<AreaDeTrabajo> {
+    return this.areaDeTrabajoModel.findOne({
       where: {
-        nombre: areaName
+        nombre: {
+          [Op.like]: areaName
+        }
       },
     });
   }
 
-  findOrCreate(areaName: String): Promise<[AreaDeTrabajo, boolean]> {
+  findOrCreate(areaName: string): Promise<AreaDeTrabajo> {
     return this.areaDeTrabajoModel.findOrCreate({
       where: {
-        nombre: areaName
+        nombre: {
+          [Op.like]: areaName
+        }
       }
-    });
+    })[0];
   }
 
-  async update(id: number, updateAreaDeTrabajoDto: UpdateAreaDeTrabajoDto): Promise<AreaDeTrabajo> {
-    const areaDeTrabajo = await this.findOne(id);
+  async update(updateAreaDeTrabajoDto: UpdateAreaDeTrabajoDto): Promise<AreaDeTrabajo> {
+    const areaDeTrabajo = await this.findOne(+updateAreaDeTrabajoDto.id);
     if (areaDeTrabajo == null) {
       throw new Error('La ID especificada no corresponde a un area de trabajo existente');
     }
