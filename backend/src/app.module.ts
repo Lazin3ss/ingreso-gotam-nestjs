@@ -4,9 +4,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EmpleadosModule } from './empleados/empleados.module';
 import { AreasDeTrabajoModule } from './areas-de-trabajo/areas-de-trabajo.module';
+import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 2000
+    }),
     AreasDeTrabajoModule,
     EmpleadosModule,
     SequelizeModule.forRoot({
@@ -17,6 +23,10 @@ import { AreasDeTrabajoModule } from './areas-de-trabajo/areas-de-trabajo.module
     })
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+    provide: APP_INTERCEPTOR,
+    useClass: CacheInterceptor,
+  }],
 })
 export class AppModule {}
